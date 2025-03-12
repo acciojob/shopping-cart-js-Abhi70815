@@ -1,47 +1,42 @@
-//your code here
-// Function to load cart items from Local Storage
-function loadCart() {
-    const cartItems = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    const cartItemsList = document.getElementById('cartItems');
-    cartItemsList.innerHTML = ''; // Clear the list before loading
+function onLoad() {
+    let cartList = JSON.parse(localStorage.getItem('items')) || [];
+    let productList = document.getElementById('product-list');
+    productList.innerHTML = ''; // Corrected from 'inneHTML' to 'innerHTML'
 
-    cartItems.forEach((item, index) => {
-        const li = document.createElement('li');
+    cartList.forEach((item, index) => {
+        let li = document.createElement('li');
         li.textContent = item;
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'Remove';
-        removeButton.onclick = () => removeItem(index);
-        li.appendChild(removeButton);
-        cartItemsList.appendChild(li);
+        let button = document.createElement('button');
+        button.textContent = 'Remove';
+        button.onclick = () => {
+            removeItem(index); // Call removeItem with the current index
+        };
+        li.appendChild(button);
+        productList.appendChild(li);
     });
 }
 
-// Function to add an item to the cart
 function addItem() {
-    const itemInput = document.getElementById('item');
-    const itemName = itemInput.value.trim();
-    
-    if (itemName) {
-        const cartItems = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        cartItems.push(itemName);
-        localStorage.setItem('shoppingCart', JSON.stringify(cartItems));
-        itemInput.value = ''; // Clear input field
-        loadCart(); // Reload the cart
-    } else {
-        alert('Please enter an item name.');
-    }
+    let itemInput = document.getElementById('itemInput');
+    let cartItems = JSON.parse(localStorage.getItem('items')) || []; // Initialize if null
+    cartItems.push(itemInput.value); // Add the new item to the cart
+    localStorage.setItem('items', JSON.stringify(cartItems)); // Save updated cart to Local Storage
+    itemInput.value = ''; // Clear the input field after adding
+    onLoad(); // Refresh the displayed cart
 }
 
-// Function to remove an item from the cart
-function removeItem(index) {
-    const cartItems = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    cartItems.splice(index, 1); // Remove the item at the specified index
-    localStorage.setItem('shoppingCart', JSON.stringify(cartItems));
-    loadCart(); // Reload the cart
+function removeItem(id) {
+    let cartList = JSON.parse(localStorage.getItem('items')) || []; // Initialize if null
+    cartList.splice(id, 1); // Remove the item at the specified index
+    localStorage.setItem('items', JSON.stringify(cartList)); // Update Local Storage
+    onLoad(); // Refresh the displayed cart
 }
 
-// Event listener for the "Add to Cart" button
-document.getElementById('addItem').addEventListener('click', addItem);
+// Set up the event listener for the "Add Item" button
+const addItems = document.getElementById('addItem');
+addItems.onclick = () => {
+    addItem(); // Call addItem when the button is clicked
+};
 
 // Load the cart items when the page loads
-window.onload = loadCart;
+window.onload = onLoad; // Correctly assign the function reference
